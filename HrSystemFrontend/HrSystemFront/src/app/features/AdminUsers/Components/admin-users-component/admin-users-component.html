@@ -1,0 +1,164 @@
+
+<div class="policy-admin-section">
+  <h3>Participation Global Policy</h3>
+  <div class="policy-controls-row">
+    <label class="checkbox-label">
+      <input type="checkbox" [(ngModel)]="policyOptOutAllowed" /> Allow Self Opt-Out
+    </label>
+    <div class="cooldown-wrapper">
+      <span>Cooldown Days:</span>
+      <input type="number" [(ngModel)]="policyCooldownDays" class="cooldown-input" />
+    </div>
+    <button class="btn-assign" (click)="onSavePolicy()">Update Policy</button>
+  </div>
+  <div *ngIf="participationFacade.successMessage()" class="msg-success">{{ participationFacade.successMessage() }}</div>
+  <div *ngIf="participationFacade.errorMessage()" class="msg-error">{{ participationFacade.errorMessage() }}</div>
+</div>
+
+<div class="users-container">
+  <div *ngIf="facade.successMessage()" class="alert alert-success">{{ facade.successMessage() }}</div>
+  <div *ngIf="facade.errorMessage()" class="alert alert-danger">{{ facade.errorMessage() }}</div>
+
+  
+  <div class="header-section">
+    <h2>{{ facade.showAdminsOnly() ? 'Admins Management' : 'Non-Admin Users Management' }}</h2>
+    
+    <button class="btn-toggle-view" (click)="facade.toggleViewMode()">
+      {{ facade.showAdminsOnly() ? 'Show Users' : 'Show Admins' }}
+    </button>
+  </div>
+
+  
+  <div class="search-section">
+    <div class="search-box-wrapper">
+      <input 
+        type="text" 
+        placeholder="Search by Name, Email, or Role..." 
+        (input)="onFilterChange($event)" 
+        class="filter-input"
+      />
+    </div>
+    <div class="search-hints">
+      <span>Type part of the user's name, email address, or system role.</span>
+    </div>
+  </div>
+
+  <div class="status-boxes-grid">
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'ALL'"
+      (click)="onStatusFilterChange('ALL')">
+      <span class="box-title">All Users</span>
+      <span class="box-count">{{ facade.totalCount() }}</span>
+    </div>
+
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'ACTIVE'"
+      (click)="onStatusFilterChange('ACTIVE')">
+      <span class="box-title">Active</span>
+      <span class="box-count">{{ facade.activeCount() }}</span>
+    </div>
+
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'INACTIVE'"
+      (click)="onStatusFilterChange('INACTIVE')">
+      <span class="box-title">Inactive</span>
+      <span class="box-count">{{ facade.inactiveCount() }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="facade.isLoading()" class="loading">Loading users...</div>
+
+  
+  <div *ngIf="!facade.isLoading() && facade.filteredUsers().length > 0" class="cards-grid">
+    <div *ngFor="let user of facade.filteredUsers()" class="user-card" [class.inactive-card]="!user.isActive">
+      <div class="card-header">
+        <div>
+          <h4>{{ user.name }}</h4>
+          <span class="user-email">{{ user.email }}</span>
+        </div>
+        <span class="status-badge" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+          {{ user.isActive ? 'Active' : 'Inactive' }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <p><strong>Current Role:</strong> <span class="role-tag">{{ user.role }}</span></p>
+        
+      
+        <ng-container *ngIf="!facade.showAdminsOnly()">
+          <p><strong>Manager:</strong> {{ facade.getManagerName(user.managerId) }}</p>
+          
+      
+          <div class="participation-info-box" style="background: #f1f5f9; padding: 10px; border-radius: 6px; margin: 10px 0; font-size: 13px;">
+           
+            <span style="display: none;">{{ participationFacade.loadEmployeeStatus(user.id) }}</span>
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>Opt-In Status:</strong></span>
+              <span class="participation-badge" 
+                    [style.color]="participationFacade.employeeStatuses()[user.id]?.isOptedIn ? '#166534' : '#991b1b'" 
+                    style="font-weight: 600;">
+                {{ participationFacade.employeeStatuses()[user.id]?.isOptedIn ? 'Opted In' : 'Opted Out' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="action-group">
+            <label>Change Role:</label>
+            <div class="manager-input-row">
+              <select #roleSelect>
+                <option value="" disabled selected>Select Role</option>
+                <option value="Admin">Admin</option>
+                <option value="Manager">Manager</option>
+              </select>
+              <button class="btn-assign" (click)="onChangeRole(user.id, roleSelect.value)">Save</button>
+            </div>
+          </div>
+
+          
+          <div class="action-group">
+            <label>Assign Manager:</label>
+            <div class="manager-input-row">
+              <select #managerSelect>
+                <option value="" disabled selected>Select Manager</option>
+                <ng-container *ngFor="let potentialManager of facade.users()">
+                  <option *ngIf="potentialManager.id !== user.id && potentialManager.role.toLowerCase() === 'manager'" [value]="potentialManager.id">
+                    {{ potentialManager.name }} ({{ potentialManager.role }})
+                  </option>
+                </ng-container>
+              </select>
+              <button class="btn-assign" (click)="onAssignManager(user.id, managerSelect.value)">Save</button>
+            </div>
+          </div>
+
+          <div class="action-group force-participation-group">
+            <label>Force Participation:</label>
+            <div class="force-input-column">
+              <input type="text" #forceReasonInput placeholder="Enter reason..." class="force-reason-input" />
+              <div class="force-buttons-row">
+                <button class="btn-assign btn-opt-in" (click)="onForceParticipation(user.id, true, forceReasonInput)">Force Opt-In</button>
+                <button class="btn-assign btn-opt-out" (click)="onForceParticipation(user.id, false, forceReasonInput)">Force Opt-Out</button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+      </div>
+
+      <div class="card-actions" *ngIf="!facade.showAdminsOnly()">
+        <button 
+          class="btn-status" 
+          [class.btn-activate]="!user.isActive"
+          [class.btn-deactivate]="user.isActive"
+          (click)="onToggleStatus(user.id, user.isActive)">
+          {{ user.isActive ? 'Deactivate' : 'Activate' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!facade.isLoading() && facade.filteredUsers().length === 0" class="no-data">No users found.</p>
+</div>

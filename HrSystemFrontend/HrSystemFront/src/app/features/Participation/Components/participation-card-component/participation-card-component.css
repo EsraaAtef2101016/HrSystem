@@ -1,0 +1,80 @@
+.participation-card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.participation-card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.alert {
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.active {
+  color: #27ae60;
+  font-weight: bold;
+}
+
+.inactive {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.btn-toggle {
+  width: 100%;
+  padding: 10px 16px;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.opt-out-btn {
+  background-color: #e74c3c;
+  color: #ffffff;
+}
+
+.opt-out-btn:hover:not(:disabled) {
+  background-color: #c0392b;
+}
+
+.opt-in-btn {
+  background-color: #27ae60;
+  color: #ffffff;
+}
+
+.opt-in-btn:hover:not(:disabled) {
+  background-color: #219653;
+}
+
+.btn-toggle:disabled {
+  background-color: #95a5a6;
+  color: #ecf0f1;
+  cursor: not-allowed;
+  opacity: 0.65;
+}

@@ -1,0 +1,161 @@
+.holidays-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.holidays-container h2 {
+  font-size: 24px;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.holidays-container h3 {
+  font-size: 18px;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.form-card {
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.btn-save, .btn-cancel, .btn-edit, .btn-delete {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-save {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-save:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-cancel {
+  background-color: #64748b;
+  color: #ffffff;
+}
+
+.btn-cancel:hover {
+  background-color: #475569;
+}
+
+.loading {
+  text-align: center;
+  color: #64748b;
+  padding: 20px;
+  font-style: italic;
+}
+
+.table-responsive {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+.holidays-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 14px;
+}
+
+.holidays-table th, .holidays-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.holidays-table th {
+  background-color: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+}
+
+.holidays-table tr:hover {
+  background-color: #f8fafc;
+}
+
+.btn-edit {
+  background-color: #eab308;
+  color: #ffffff;
+  margin-right: 8px;
+  padding: 6px 12px;
+}
+
+.btn-edit:hover {
+  background-color: #ca8a04;
+}
+
+.btn-delete {
+  background-color: #dc2626;
+  color: #ffffff;
+  padding: 6px 12px;
+}
+
+.btn-delete:hover {
+  background-color: #b91c1c;
+}
+
+.no-data {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+}

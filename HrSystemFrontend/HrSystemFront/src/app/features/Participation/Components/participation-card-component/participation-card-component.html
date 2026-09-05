@@ -1,0 +1,32 @@
+<div class="participation-card">
+      <h3>Participation Status</h3>
+      
+     <div *ngIf="facade.successMessage()" class="alert alert-success">
+        {{ facade.successMessage() }}
+      </div>
+      <div *ngIf="facade.errorMessage()" class="alert alert-danger">
+        {{ facade.errorMessage() }}
+      </div>
+
+      <div *ngIf="facade.isLoading()" class="loading">Loading...</div>
+
+      <div *ngIf="!facade.isLoading() && facade.status() as status">
+        <p>
+          <strong>Status:</strong> 
+          <span [class.active]="status.isOptedIn" [class.inactive]="!status.isOptedIn">
+            {{ status.isOptedIn ? 'Opted In (Active)' : 'Opted Out (Inactive)' }}
+          </span>
+        </p>
+        <p *ngIf="status.lastOptOutDate"><strong>Last Opt-Out:</strong> {{ status.lastOptOutDate | date:'medium' }}</p>
+        <p *ngIf="status.cooldownEndDate"><strong>Cooldown Ends:</strong> {{ status.cooldownEndDate | date:'medium' }}</p>
+
+        <button 
+          class="btn-toggle" 
+          [class.opt-out-btn]="status.isOptedIn" 
+          [class.opt-in-btn]="!status.isOptedIn" 
+          [disabled]="isCooldownActive(status.cooldownEndDate)"
+          (click)="onToggle(status.isOptedIn)">
+          {{ status.isOptedIn ? 'Opt Out' : 'Opt In' }}
+        </button>
+      </div>
+    </div>

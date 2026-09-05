@@ -1,0 +1,122 @@
+<app-header></app-header>
+<div class="policy-container">
+  <div *ngIf="facade.successMessage()" class="alert alert-success">{{ facade.successMessage() }}</div>
+  <div *ngIf="facade.errorMessage()" class="alert alert-danger">{{ facade.errorMessage() }}</div>
+
+  <div class="header-section">
+    <h2>Leave Policies Management</h2>
+    <button class="btn-create" (click)="facade.showForm() ? facade.closeForm() : onOpenCreate()">
+      {{ facade.showForm() ? 'Cancel' : '+ Create New Policy' }}
+    </button>
+  </div>
+
+  
+  <div class="search-section">
+    <div class="search-box-wrapper">
+      
+      <input 
+        type="text" 
+        placeholder="Search by Leave Type, or Allowance days..." 
+        (input)="onFilterChange($event)" 
+        class="filter-input"
+      />
+    </div>
+  </div>
+
+  
+  <div class="status-boxes-grid">
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'ALL'"
+      (click)="onStatusFilterChange('ALL')">
+      <span class="box-title">All Policies</span>
+      <span class="box-count">{{ facade.totalCount() }}</span>
+    </div>
+
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'ENABLED'"
+      (click)="onStatusFilterChange('ENABLED')">
+      <span class="box-title">Enabled</span>
+      <span class="box-count">{{ facade.enabledCount() }}</span>
+    </div>
+
+    <div 
+      class="status-box" 
+      [class.active-box]="facade.statusFilter() === 'DISABLED'"
+      (click)="onStatusFilterChange('DISABLED')">
+      <span class="box-title">Disabled</span>
+      <span class="box-count">{{ facade.disabledCount() }}</span>
+    </div>
+  </div>
+
+  
+  <div *ngIf="facade.showForm()" class="form-card">
+    <h3>{{ facade.isEditing() ? 'Edit Leave Policy' : 'Add New Leave Policy' }}</h3>
+    <form [formGroup]="policyForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label>Leave Type</label>
+        <input type="text" formControlName="leaveType" placeholder="e.g., Vacation, SickLeave" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Annual Allowance (Days)</label>
+          <input type="number" formControlName="annualAllowance" />
+        </div>
+        <div class="form-group">
+          <label>Max Consecutive Days</label>
+          <input type="number" formControlName="maxConsecutiveDays" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Min Notice Days</label>
+          <input type="number" formControlName="minNoticeDays" />
+        </div>
+        <div class="form-group">
+          <label>Backdate Days</label>
+          <input type="number" formControlName="backdateDays" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" [disabled]="policyForm.invalid">
+        {{ facade.isEditing() ? 'Update Policy' : 'Save Policy' }}
+      </button>
+    </form>
+  </div>
+
+  <div *ngIf="facade.isLoading()" class="loading">Loading policies...</div>
+
+  
+  <div *ngIf="!facade.isLoading() && facade.filteredPolicies().length > 0" class="cards-grid">
+    <div *ngFor="let policy of facade.filteredPolicies()" class="policy-card" [class.disabled-card]="!policy.isEnabled">
+      <div class="card-header">
+        <h4>{{ policy.leaveType }} <span class="version-tag">v{{ policy.version }}</span></h4>
+        <span class="status-badge" [class.active]="policy.isEnabled" [class.inactive]="!policy.isEnabled">
+          {{ policy.isEnabled ? 'Enabled' : 'Disabled' }}
+        </span>
+      </div>
+      
+      <div class="card-body">
+        <p><strong>Allowance:</strong> {{ policy.annualAllowance }} days</p>
+        <p><strong>Max Consecutive:</strong> {{ policy.maxConsecutiveDays }} days</p>
+        <p><strong>Min Notice:</strong> {{ policy.minNoticeDays }} days</p>
+        <p><strong>Backdate Days:</strong> {{ policy.backdateDays }} days</p>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-edit" (click)="onOpenEdit(policy)">Edit</button>
+        <button class="btn-status" (click)="facade.updateStatus(policy.id, !policy.isEnabled)">
+          {{ policy.isEnabled ? 'Disable' : 'Enable' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <p *ngIf="!facade.isLoading() && facade.filteredPolicies().length === 0" class="no-data">No leave policies found.</p>
+</div>
+
+<app-footer></app-footer>

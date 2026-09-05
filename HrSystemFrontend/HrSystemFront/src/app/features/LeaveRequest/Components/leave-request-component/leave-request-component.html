@@ -1,0 +1,79 @@
+
+<app-header></app-header>
+<div class="leave-container">
+
+  <h2>My Leave Requests</h2>
+
+  <!-- Form for Create / Edit -->
+  <form (ngSubmit)="submitForm()" class="leave-form">
+    <div class="form-group">
+      <label>Leave Type:</label>
+      <select [(ngModel)]="formModel.leaveType" name="leaveType" required>
+        <option value="Vacation">Vacation</option>
+        <option value="DayOff">Day Off</option>
+        <option value="SickLeave">Sick Leave</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Start Date:</label>
+      <input type="date" [(ngModel)]="formModel.startDate" name="startDate" required />
+    </div>
+
+    <div class="form-group">
+      <label>End Date:</label>
+      <input type="date" [(ngModel)]="formModel.endDate" name="endDate" required />
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit">
+        {{ isEditing ? 'Update Request' : 'Create Request' }}
+      </button>
+      <button type="button" class="btn-cancel" *ngIf="isEditing" (click)="resetForm()">
+        Cancel
+      </button>
+      
+    </div>
+  </form>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="leaveFacade.isLoading()" class="loading-spinner">Loading requests...</div>
+
+  <!-- Requests Table -->
+  <table class="requests-table" *ngIf="!leaveFacade.isLoading()">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Status</th>
+        <th>Days</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let req of leaveFacade.selectedRequest() ? [leaveFacade.selectedRequest()!] : []">
+        <!-- If needed, individual view details container can go here -->
+      </tr>
+      <tr *ngFor="let req of leaveFacade.requests()">
+        <td>{{ req.leaveType }}</td>
+        <td>{{ req.startDate | date:'yyyy-MM-dd' }}</td>
+        <td>{{ req.endDate | date:'yyyy-MM-dd' }}</td>
+        <td>
+          <span class="status-badge" [ngClass]="req.status?.toLowerCase()">
+            {{ req.status }}
+          </span>
+        </td>
+        <td>{{ req.chargedDays }}</td>
+        <td>
+          <button class="btn-action" *ngIf="req.status === 'Pending'" (click)="editRequest(req)">Edit</button>
+          <button class="btn-action cancel" *ngIf="!canCancelRequest(req)" (click)="cancelRequest(req.id)">Cancel</button>
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+ 
+</div>
+<app-footer></app-footer>

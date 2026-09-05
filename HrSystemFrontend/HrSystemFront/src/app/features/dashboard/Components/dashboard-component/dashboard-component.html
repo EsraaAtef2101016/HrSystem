@@ -1,0 +1,30 @@
+<app-header></app-header>
+
+<main class="dashboard-wrapper">
+  <div class="dashboard-container">
+    
+    <div class="dashboard-header">
+      <h1>Welcome to Your Dashboard</h1>
+      <p class="subtitle">Manage your participation status and track your leave balances in one place.</p>
+    </div>
+
+    @if (isAdmin()) {
+      <div class="dashboard-content">
+        <app-admin-users-component></app-admin-users-component>
+      </div>
+    } @else if (isEmployeeOrManager()) {
+      <div class="dashboard-content">
+        <app-employee-dashboard-details-component></app-employee-dashboard-details-component>
+      </div>
+    } @else {
+      <div class="unauthorized-card">
+        <div class="unauthorized-icon">⚠️</div>
+        <h3>Access Restricted</h3>
+        <p>You do not have the required permissions to view this dashboard content.</p>
+      </div>
+    }
+
+  </div>
+</main>
+
+<app-footer></app-footer>

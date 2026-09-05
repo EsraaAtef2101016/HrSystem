@@ -1,0 +1,337 @@
+.users-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.policy-admin-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 24px auto;
+  max-width: 1150px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.policy-admin-section h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.policy-controls-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+}
+
+.cooldown-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.cooldown-input {
+  padding: 6px 10px;
+  width: 80px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.msg-success {
+  color: #166534;
+  font-size: 13px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.msg-error {
+  color: #991b1b;
+  font-size: 13px;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header-section h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.btn-toggle-view {
+  background-color: #0f172a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-toggle-view:hover {
+  background-color: #1e293b;
+}
+
+.search-section {
+  margin-bottom: 20px;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-hints {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.status-boxes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.status-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.status-box.active-box {
+  background: #e0f2fe;
+  border-color: #0284c7;
+}
+
+.box-title {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.box-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.user-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inactive-card {
+  background-color: #f8fafc;
+  border-left: 4px solid #ef4444;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.user-email {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.status-badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.status-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.card-body p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #334155;
+}
+
+.role-tag {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.action-group {
+  margin-top: 14px;
+}
+
+.action-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.manager-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.manager-input-row select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.btn-assign {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-assign:hover {
+  background-color: #1d4ed8;
+}
+
+.force-participation-group {
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 12px;
+  margin-top: 14px;
+}
+
+.force-input-column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.force-reason-input {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.force-buttons-row {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-opt-in {
+  background-color: #16a34a;
+  flex: 1;
+}
+.btn-opt-in:hover {
+  background-color: #15803d;
+}
+
+.btn-opt-out {
+  background-color: #dc2626;
+  flex: 1;
+}
+.btn-opt-out:hover {
+  background-color: #b91c1c;
+}
+
+.card-actions {
+  margin-top: 20px;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 14px;
+}
+
+.btn-status {
+  width: 100%;
+  border: none;
+  padding: 9px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-deactivate {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.btn-deactivate:hover {
+  background-color: #fecaca;
+}
+
+.btn-activate {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.btn-activate:hover {
+  background-color: #a7f3d0;
+}
+
+.no-data {
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 30px;
+}

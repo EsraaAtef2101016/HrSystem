@@ -1,0 +1,14 @@
+.dashboard-footer {
+      text-align: center;
+      background-color: #ffffff;
+      padding: 1rem;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 0.875rem;
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: auto;
+    }
+    .dashboard-footer p {
+      margin: 0;
+    }

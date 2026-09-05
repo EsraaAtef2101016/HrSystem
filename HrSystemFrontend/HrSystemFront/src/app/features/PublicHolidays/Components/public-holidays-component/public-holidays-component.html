@@ -1,0 +1,56 @@
+<app-header></app-header>
+<div class="holidays-container">
+  <h2>Public Holidays Management</h2>
+
+ 
+  <div *ngIf="holidayFacade.successMessage()" class="alert alert-success">
+    {{ holidayFacade.successMessage() }}
+  </div>
+  <div *ngIf="holidayFacade.errorMessage()" class="alert alert-danger">
+    {{ holidayFacade.errorMessage() }}
+  </div>
+
+ 
+  <div class="form-card">
+    <h3>{{ isEditing ? 'Edit Holiday' : 'Add New Holiday' }}</h3>
+    <div class="form-row">
+      <input type="text" [(ngModel)]="holidayName" placeholder="Holiday Name" class="form-input" />
+      <input type="date" [(ngModel)]="holidayDate" class="form-input" />
+      <button class="btn-save" (click)="onSave()">
+        {{ isEditing ? 'Update' : 'Create' }}
+      </button>
+      <button *ngIf="isEditing" class="btn-cancel" (click)="resetForm()">Cancel</button>
+    </div>
+  </div>
+
+  <div *ngIf="holidayFacade.isLoading()" class="loading">Loading holidays...</div>
+
+  
+  <div class="table-responsive" *ngIf="!holidayFacade.isLoading()">
+    <h3>All Holidays</h3>
+    <table class="holidays-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let holiday of holidayFacade.holidays()">
+          <td>{{ holiday.name }}</td>
+          <td>{{ holiday.date }}</td>
+          <td>
+            <button class="btn-edit" (click)="onEdit(holiday)">Edit</button>
+            <button class="btn-delete" (click)="onDelete(holiday.id)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="holidayFacade.holidays().length === 0">
+          <td colspan="3" class="no-data">No holidays found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<app-footer></app-footer>

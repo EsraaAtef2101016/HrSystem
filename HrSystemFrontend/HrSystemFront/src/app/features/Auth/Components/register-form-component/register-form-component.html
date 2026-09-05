@@ -1,0 +1,120 @@
+<!-- register-form-component.html -->
+<div class="auth-container-wrapper">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-card">
+    
+    <!-- Branding / Logo Section -->
+    <div class="brand-section">
+      <div class="brand-logo-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-3-6a3 3 0 1 0-6 0 3 3 0 0 0 6 0M8 7a2 2 0 1 1 0-4 2 2 0 0 1 0 4"/>
+          <path d="M8.256 14a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.487-.65.778-.922C8.952 8.922 8.49 8.5 8 8.5c-2.618 0-4 1.25-4 2.5 0 1.125.875 2 2 2z"/>
+        </svg>
+      </div>
+      <h2>Create Account</h2>
+      <p class="subtitle">Join the HR Portal to manage your workflow</p>
+    </div>
+
+    @if (authFacade.errorMessage()) {
+      <div class="error-banner">
+        <div>{{ authFacade.errorMessage() }}</div>
+      </div>
+    }
+    @if (authFacade.successMessage()) {
+      <div class="success-banner">
+        <span>✅</span>
+        <div>{{ authFacade.successMessage() }}</div>
+      </div>
+    }
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input
+        type="text"
+        id="name"
+        formControlName="name"
+        [class.error-input]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+        placeholder="Enter your name"
+      />
+      @if (registerForm.get('name')?.invalid && registerForm.get('name')?.touched) {
+        <div class="field-error">
+          @if (registerForm.get('name')?.errors?.['required']) {
+            <small>Name is required.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        [class.error-input]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        placeholder="name@company.com"
+      />
+      @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+        <div class="field-error">
+          @if (registerForm.get('email')?.errors?.['required']) {
+            <small>Email is required.</small>
+          }
+          @if (registerForm.get('email')?.errors?.['email']) {
+            <small>Please enter a valid email.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        [class.error-input]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        placeholder="Enter your password"
+      />
+      @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+        <div class="field-error">
+          @if (registerForm.get('password')?.errors?.['required']) {
+            <small>Password is required.</small>
+          }
+          @if (registerForm.get('password')?.errors?.['minlength']) {
+            <small>Password must be at least 6 characters.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="userRole">Role</label>
+      <select id="userRole" formControlName="userRole">
+        @for (role of roles; track role) {
+          <option [value]="role">{{ role }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="managerId">Manager ID (Optional)</label>
+      <input
+        type="text"
+        id="managerId"
+        formControlName="managerId"
+        placeholder="Enter manager ID"
+      />
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || authFacade.isLoading()">
+      @if (authFacade.isLoading()) {
+        <span>Registering...</span>
+      } @else {
+        Register
+      }
+    </button>
+
+    <div class="auth-redirect">
+      <p>Already have an account? <span class="nav-link-clickable" (click)="navigateToLogin()">Sign in</span></p>
+    </div>
+  </form>
+</div>
