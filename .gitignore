@@ -1,28 +1,48 @@
-# Angular specific
+# ==========================================
+# 1. Frontend: Angular & Node / JavaScript
+# ==========================================
+/node_modules/
 /dist/
 /out-tsc/
-/tmp/
 /coverage/
 /e2e/test-output/
 /.angular/
 .angular/
+.npm
+.eslintcache
+.cache
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
-
-# Environment files
-/.env
-
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
-
-# TypeScript cache
+# ==========================================
+# 2. Backend: .NET / C# (Visual Studio & CLI)
+# ==========================================
+[Bb]in/
+[Oo]bj/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+x64/
+x86/
+[Ll]ogs/
+[Tt]emp/
 *.tsbuildinfo
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# ==========================================
+# 3. Environment & Configuration Secrets
+# ==========================================
+.env
+appsettings.Development.json
+appsettings.local.json
+*.pem
+
+# ==========================================
+# 4. IDEs and Editors (VS Code, Visual Studio, JetBrains)
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
