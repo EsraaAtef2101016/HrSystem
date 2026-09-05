@@ -31,6 +31,8 @@ using HrSystem.Application.Features.ProfileFeature.IService;
 using HrSystem.Application.Features.PublicHolidayFeature.Validator;
 using HrSystem.Application.Features.UserFeature.DTO.RequestDto;
 using HrSystem.Application.DTO.Features.PublicHolidayFeature.RequestDto;
+using HrSystem.Api.Filter;
+using Serilog;
 
 namespace HrSystem.Api;
 
@@ -40,8 +42,15 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .CreateLogger();
 
-        builder.Services.AddControllers()
+        builder.Host.UseSerilog();
+        builder.Services.AddControllers(option =>
+            {
+                option.Filters.Add<LogActivityFilter>();
+            })
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -167,7 +176,7 @@ public class Program
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "HrSystem API V1");
             });
         }
-
+        app.UseSerilogRequestLogging();
         app.UseMiddleware<GlobalExceptionMiddleware>();
         app.UseMiddleware<RateLimitingMiddleware>();
         app.UseHttpsRedirection();
