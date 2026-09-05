@@ -18,7 +18,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\HrSystem.Application\HrSystem.Application.csproj" />
-	  <ProjectReference Include="..\HrSystem.Domain\HrSystem.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

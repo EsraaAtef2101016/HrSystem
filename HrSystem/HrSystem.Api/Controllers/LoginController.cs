@@ -3,7 +3,6 @@ using FluentValidation;
 using HrSystem.Application.Extensions;                 // ToActionResult extension method
 using HrSystem.Application.Features.UserFeature.DTO.RequestDto;
 using HrSystem.Application.Features.UserFeature.IService;
-using HrSystem.Infrastructure.Persistence.Context;      // ApplicationDBContext
 using Microsoft.AspNetCore.Mvc;
 namespace HrSystem.Api.Controllers;
 
@@ -12,12 +11,9 @@ namespace HrSystem.Api.Controllers;
 public class LoginController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IValidator<LoginUserRequest> _validator;
-    private readonly ApplicationDBContext context;
-    public LoginController(IValidator<LoginUserRequest> validator, ApplicationDBContext _context, IUserService userService)
+    
+    public LoginController( IUserService userService)
     {
-        _validator = validator;
-        context = _context;
         _userService = userService;
     }
 

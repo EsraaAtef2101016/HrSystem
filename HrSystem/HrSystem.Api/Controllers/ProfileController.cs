@@ -4,7 +4,6 @@ using HrSystem.Application.Common.Exceptions;
 using HrSystem.Application.Extensions;
 using HrSystem.Application.Features.ProfileFeature.DTO.RequestDto;
 using HrSystem.Application.Features.ProfileFeature.IService;
-using HrSystem.Infrastructure.Persistence.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +14,10 @@ namespace HrSystem.Api.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
-        private readonly ApplicationDBContext context;
+    
 
-        public ProfileController(ApplicationDBContext _context, IProfileService profileService)
+        public ProfileController(IProfileService profileService)
         {
-            context = _context;
             _profileService = profileService;
         }
 

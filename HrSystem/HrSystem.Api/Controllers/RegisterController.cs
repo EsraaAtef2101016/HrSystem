@@ -3,7 +3,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using HrSystem.Infrastructure.Persistence.Context;      // ApplicationDBContext
 using HrSystem.Application.Extensions;                 // ToActionResult extension method
 
 using HrSystem.Application.Features.UserFeature.DTO.RequestDto;
@@ -16,11 +15,9 @@ namespace HrSystem.Api.Controllers
     {
         private readonly IUserService _userService;
         private readonly IValidator<RegisterUserRequest> _validator;
-        private readonly ApplicationDBContext context;
-        public RegisterController(IValidator<RegisterUserRequest> validator, ApplicationDBContext _context, IUserService userService)
+      
+        public RegisterController(IUserService userService)
         {
-            _validator = validator;
-            context = _context;
             _userService = userService;
         }
 
