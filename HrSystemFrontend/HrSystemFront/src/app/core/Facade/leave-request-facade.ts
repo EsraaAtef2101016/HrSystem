@@ -13,7 +13,8 @@ export class LeaveRequestFacade {
   readonly approvedRequests = computed(() => 
     this.requests().filter(req => req.status?.toLowerCase() === 'approved')
   );
-  
+  readonly corrMessage =signal<string |null>(null) ;
+  readonly errorMessage =signal<string |null>(null) ;
 
   readonly isLoading = signal<boolean>(false);
   
@@ -56,9 +57,13 @@ export class LeaveRequestFacade {
         console.log(res);
         this.loadMyRequests();
         onSuccess();
+        this.corrMessage.set("Request Created Successfully");
       },
       error: (err) => {
         console.error(' Error: Failed to create leave request.', err);
+        // this.errorMessage.set(err.message);
+                this.errorMessage.set(err.error.message);
+
       }
     });
   }
@@ -70,9 +75,12 @@ export class LeaveRequestFacade {
         console.log(res);
         this.loadMyRequests();
         onSuccess();
+          this.corrMessage.set("Request updated Successfully");
       },
       error: (err) => {
+
         console.error(` Error: Failed to update leave request [${id}].`, err);
+          this.errorMessage.set(err.message);
       }
     });
   }
@@ -83,7 +91,9 @@ export class LeaveRequestFacade {
       this.loadMyRequests();
     },
     error: (err) => {
-      console.error(`Error: Failed to cancel leave request [${id}].`, err);
+      console.log(err)
+      // console.error(`Error: Failed to cancel leave request [${id}].`, err);
+        this.errorMessage.set(`Error: Failed to cancel leave request [${id}]. ${err.error.message}`);
     }
   });
 }

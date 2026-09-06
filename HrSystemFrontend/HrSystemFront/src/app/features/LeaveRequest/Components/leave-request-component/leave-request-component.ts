@@ -45,6 +45,11 @@ export class LeaveRequestComponent implements OnInit {
     }
   }
 
+  closeAlert(){
+    this.leaveFacade.errorMessage.set(null);
+    this.leaveFacade.corrMessage.set(null);
+  }
+
   editRequest(req: any): void {
     this.isEditing = true;
     this.editingId = req.id;

@@ -73,9 +73,10 @@
 }
 
 .logout-btn {
-  background-color: #fef2f2;
-  color: #dc2626;
-  border: 1px solid #fee2e2;
+
+  background-color: #0c0c0c;
+  color: #ece9e9;
+  border: 1px solid #636060;
   padding: 7px 14px;
   border-radius: 6px;
   font-size: 13.5px;
@@ -153,4 +154,50 @@
     text-align: center;
     padding: 10px;
   }
+}
+
+
+.nav-profile-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+.nav-avatar {
+  cursor: pointer;
+  display: block;
+  color: inherit;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  background-color: #fff;
+  color: #333;
+  min-width: 130px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  z-index: 100;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu a {
+  color: #333;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  font-size: 14px;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f1f1f1;
+}
+
+.logout-link {
+  color: #d9534f !important;
 }

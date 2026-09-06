@@ -16,19 +16,19 @@ export class ParticipationCardComponent implements OnInit {
     this.facade.loadStatus();
   }
   
-  isCooldownActive(cooldownDate: string | null): boolean {
-    if (!cooldownDate) return false;
-    return new Date() < new Date(cooldownDate);
-  }
+  // isCooldownActive(cooldownDate: string | null): boolean {
+  //   if (!cooldownDate) return false;
+  //   return new Date() < new Date(cooldownDate);
+  // }
 
-  onToggle(isCurrentlyOptedIn: boolean): void {
-    const actionName = isCurrentlyOptedIn ? 'opt out' : 'opt in';
-    if (confirm(`Are you sure you want to ${actionName}?`)) {
-      if (isCurrentlyOptedIn) {
-        this.facade.optOut();
-      } else {
-        this.facade.optIn();
-      }
-    }
-  }
+  // onToggle(isCurrentlyOptedIn: boolean): void {
+  //   const actionName = isCurrentlyOptedIn ? 'opt out' : 'opt in';
+  //   if (confirm(`Are you sure you want to ${actionName}?`)) {
+  //     if (isCurrentlyOptedIn) {
+  //       this.facade.optOut();
+  //     } else {
+  //       this.facade.optIn();
+  //     }
+  //   }
+  // }
 }

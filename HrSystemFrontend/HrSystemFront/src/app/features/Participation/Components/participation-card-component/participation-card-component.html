@@ -20,13 +20,13 @@
         <p *ngIf="status.lastOptOutDate"><strong>Last Opt-Out:</strong> {{ status.lastOptOutDate | date:'medium' }}</p>
         <p *ngIf="status.cooldownEndDate"><strong>Cooldown Ends:</strong> {{ status.cooldownEndDate | date:'medium' }}</p>
 
-        <button 
+        <!-- <button 
           class="btn-toggle" 
           [class.opt-out-btn]="status.isOptedIn" 
           [class.opt-in-btn]="!status.isOptedIn" 
           [disabled]="isCooldownActive(status.cooldownEndDate)"
           (click)="onToggle(status.isOptedIn)">
           {{ status.isOptedIn ? 'Opt Out' : 'Opt In' }}
-        </button>
+        </button> -->
       </div>
     </div>

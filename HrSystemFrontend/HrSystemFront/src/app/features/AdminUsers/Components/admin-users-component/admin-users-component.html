@@ -21,7 +21,7 @@
 
   
   <div class="header-section">
-    <h2>{{ facade.showAdminsOnly() ? 'Admins Management' : 'Non-Admin Users Management' }}</h2>
+    <h2>{{ facade.showAdminsOnly() ? 'Admins Management' : 'Users Management' }}</h2>
     
     <button class="btn-toggle-view" (click)="facade.toggleViewMode()">
       {{ facade.showAdminsOnly() ? 'Show Users' : 'Show Admins' }}
@@ -134,7 +134,7 @@
             </div>
           </div>
 
-          <div class="action-group force-participation-group">
+          <!-- <div class="action-group force-participation-group">
             <label>Force Participation:</label>
             <div class="force-input-column">
               <input type="text" #forceReasonInput placeholder="Enter reason..." class="force-reason-input" />
@@ -143,7 +143,43 @@
                 <button class="btn-assign btn-opt-out" (click)="onForceParticipation(user.id, false, forceReasonInput)">Force Opt-Out</button>
               </div>
             </div>
-          </div>
+          </div> -->
+
+              <!-- <div class="action-group force-participation-group">
+      <label>Force Participation:</label>
+      <div class="force-input-column">
+        <input type="text" #forceReasonInput placeholder="Enter reason..." class="force-reason-input" />
+        <div class="force-buttons-row">
+          <button 
+            class="btn-assign btn-opt-in" 
+            [disabled]="participationFacade.employeeStatuses()[user.id]?.isOptedIn === true"
+            (click)="onForceParticipation(user.id, true, forceReasonInput)">
+            Force Opt-In
+          </button>
+          <button 
+            class="btn-assign btn-opt-out" 
+            [disabled]="participationFacade.employeeStatuses()[user.id]?.isOptedIn === false"
+            (click)="onForceParticipation(user.id, false, forceReasonInput)">
+            Force Opt-Out
+          </button>
+        </div>
+      </div>
+    </div> -->
+    <div class="action-group force-participation-group">
+  <label>Force Participation:</label>
+  <div class="force-input-column">
+    <input type="text" #forceReasonInput placeholder="Enter reason..." class="force-reason-input" />
+    <div class="force-buttons-row">
+      <button 
+        class="btn-assign" 
+        [class.btn-opt-in]="!participationFacade.employeeStatuses()[user.id]?.isOptedIn"
+        [class.btn-opt-out]="participationFacade.employeeStatuses()[user.id]?.isOptedIn"
+        (click)="onForceParticipation(user.id, !participationFacade.employeeStatuses()[user.id]?.isOptedIn, forceReasonInput)">
+        {{ participationFacade.employeeStatuses()[user.id]?.isOptedIn ? 'Force Opt-Out' : 'Force Opt-In' }}
+      </button>
+    </div>
+  </div>
+</div>
         </ng-container>
 
       </div>

@@ -1,15 +1,20 @@
 <app-header></app-header>
 <div class="holidays-container">
   <h2>Public Holidays Management</h2>
-
+  @if(holidayFacade.successMessage()){
+  <div class="alert alert-success" role="alert">
+    {{holidayFacade.successMessage()}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"(click)="closeAlert()"></button>
+  </div>
+  }
+  @if(holidayFacade.errorMessage()){
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{holidayFacade.errorMessage()}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="closeAlert()"></button>
+  </div>
+  }
  
-  <div *ngIf="holidayFacade.successMessage()" class="alert alert-success">
-    {{ holidayFacade.successMessage() }}
-  </div>
-  <div *ngIf="holidayFacade.errorMessage()" class="alert alert-danger">
-    {{ holidayFacade.errorMessage() }}
-  </div>
-
+  
  
   <div class="form-card">
     <h3>{{ isEditing ? 'Edit Holiday' : 'Add New Holiday' }}</h3>

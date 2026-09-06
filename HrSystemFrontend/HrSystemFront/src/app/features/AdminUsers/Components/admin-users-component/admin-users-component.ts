@@ -51,9 +51,11 @@ export class AdminUsersComponent implements OnInit {
       return;
     }
     this.participationFacade.forceParticipation(employeeId, forceOptIn, reason);
-   setTimeout(() => {
-    this.participationFacade.loadEmployeeStatus(employeeId);
-  }, 400);
+        this.participationFacade.loadEmployeeStatus(employeeId);
+
+  //  setTimeout(() => {
+  // }, 400);
+
     reasonInput.value = '';
   }
 

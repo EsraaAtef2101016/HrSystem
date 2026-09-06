@@ -101,6 +101,7 @@ export class EmployeeParticipationFacade {
   readonly employeeStatuses = signal<{ [key: string]: ParticipationStatus }>({});
 
   loadEmployeeStatus(employeeId: string): void {
+    console.log(employeeId)
     if (this.employeeStatuses()[employeeId]) return;
 
     this.participationService.getEmployeeStatus(employeeId).pipe(

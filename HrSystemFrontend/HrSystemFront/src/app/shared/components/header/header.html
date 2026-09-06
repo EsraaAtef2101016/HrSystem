@@ -16,14 +16,79 @@
     <span class="bar"></span>
   </button>
 
+
+
   <div class="header-actions" [class.mobile-open]="isMobileMenuOpen">
-    <nav class="nav-links">
-      <a routerLink="/dashboard" (click)="closeMobileMenu()">Dashboard</a>
-      <a routerLink="/leave-requests" *ngIf="isEmployee || isManager" (click)="closeMobileMenu()">My Leave Requests</a>
-      <a routerLink="/team-requests" *ngIf="isAdmin || isManager" (click)="closeMobileMenu()">Team Requests</a>
-      <a routerLink="/leave-policies" *ngIf="isAdmin" (click)="closeMobileMenu()">Leave Policies</a>
-      <a routerLink="/public-holidays" *ngIf="isAdmin" (click)="closeMobileMenu()">Public Holidays</a>
-    </nav>
-    <button class="logout-btn" (click)="onLogout()">Logout</button>
+  <nav class="nav-links">
+    <a routerLink="/dashboard" (click)="closeMobileMenu()">Dashboard</a>
+    <a routerLink="/leave-requests" *ngIf="isEmployee || isManager" (click)="closeMobileMenu()">My Leave Requests</a>
+    <a routerLink="/team-requests" *ngIf="isAdmin || isManager" (click)="closeMobileMenu()">Team Requests</a>
+    <a routerLink="/leave-policies" *ngIf="isAdmin" (click)="closeMobileMenu()">Leave Policies</a>
+    <a routerLink="/public-holidays" *ngIf="isAdmin" (click)="closeMobileMenu()">Public Holidays</a>
+  </nav>
+  
+<!-- <div class="nav-profile-container">
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16" class="nav-avatar" (click)="toggleDropdown($event)">
+    <rect width="16" height="16" id="icon-bound" fill="none" />
+    <path d="M8,8c2.209,0,4-1.791,4-4s-1.791-4-4-4S4,1.791,4,4S5.791,8,8,8z M12,10H4c-2.209,0-4,1.791-4,4v2h16v-2 C16,11.791,14.209,10,12,10z" fill="currentColor" />
+  </svg>
+  <div class="dropdown-menu" [class.show]="isDropdownOpen">
+    <a href="#" (click)="openModal($event)">
+      {{ facade.status()?.isOptedIn ? 'Opt Out' : 'Opt In' }}
+    </a>    
+    <a href="#logout" class="logout-link" (click)="onLogout()">Logout</a>
   </div>
+</div> -->
+
+<div class="nav-profile-container">
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16" class="nav-avatar" (click)="toggleDropdown($event)">
+    <rect width="16" height="16" id="icon-bound" fill="none" />
+    <path d="M8,8c2.209,0,4-1.791,4-4s-1.791-4-4-4S4,1.791,4,4S5.791,8,8,8z M12,10H4c-2.209,0-4,1.791-4,4v2h16v-2 C16,11.791,14.209,10,12,10z" fill="currentColor" />
+  </svg>
+  <div class="dropdown-menu" [class.show]="isDropdownOpen">
+    <a href="#" *ngIf="!isAdmin" (click)="openModal($event)">
+      {{ facade.status()?.isOptedIn ? 'Opt Out' : 'Opt In' }}
+    </a>    
+    <a href="#logout" class="logout-link" (click)="onLogout()">Logout</a>
+  </div>
+</div>
+</div>
 </header>
+
+
+
+<!-- 
+Button to open modal
+<button class="btn btn-primary" (click)="openModal()">Open Modal</button> -->
+
+<!-- Modal Structure -->
+<div class="modal fade" [class.show]="isModalOpen" [style.display]="isModalOpen ? 'block' : 'none'" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ facade.status()?.isOptedIn ? 'Opt Out' : 'Opt In' }} Confirmation</h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        @if (isCooldownActive(facade.status()?.cooldownEndDate || null)) {
+          <p class="text-danger">You are currently in a cooldown period and cannot change your status.</p>
+        } @else {
+          <p>Are you sure you want to {{ facade.status()?.isOptedIn ? 'opt out' : 'opt in' }}?</p>
+        }
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          [disabled]="isCooldownActive(facade.status()?.cooldownEndDate || null)"
+          (click)="confirmToggleStatus()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop overlay when modal is open -->
+<div class="modal-backdrop fade show" *ngIf="isModalOpen"></div>

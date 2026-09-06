@@ -50,6 +50,10 @@ export class PublicHolidaysComponent implements OnInit {
     }
   }
 
+   closeAlert(){
+    this.holidayFacade.errorMessage.set(null);
+    this.holidayFacade.successMessage.set(null);
+  }
   resetForm(): void {
     this.isEditing = false;
     this.editingId = null;

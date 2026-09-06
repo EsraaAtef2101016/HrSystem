@@ -1,8 +1,21 @@
-
 <app-header></app-header>
 <div class="leave-container">
 
   <h2>My Leave Requests</h2>
+  @if(leaveFacade.corrMessage()){
+  <div class="alert alert-success" role="alert">
+    {{leaveFacade.corrMessage()}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"(click)="closeAlert()"></button>
+  </div>
+  }
+  @if(leaveFacade.errorMessage()){
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{leaveFacade.errorMessage()}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="closeAlert()"></button>
+  </div>
+  }
+
+
 
   <!-- Form for Create / Edit -->
   <form (ngSubmit)="submitForm()" class="leave-form">
@@ -32,7 +45,7 @@
       <button type="button" class="btn-cancel" *ngIf="isEditing" (click)="resetForm()">
         Cancel
       </button>
-      
+
     </div>
   </form>
 
@@ -67,13 +80,14 @@
         <td>{{ req.chargedDays }}</td>
         <td>
           <button class="btn-action" *ngIf="req.status === 'Pending'" (click)="editRequest(req)">Edit</button>
-          <button class="btn-action cancel" *ngIf="!canCancelRequest(req)" (click)="cancelRequest(req.id)">Cancel</button>
-         
+          <button class="btn-action cancel" *ngIf="!canCancelRequest(req)"
+            (click)="cancelRequest(req.id)">Cancel</button>
+
         </td>
       </tr>
     </tbody>
   </table>
 
- 
+
 </div>
 <app-footer></app-footer>

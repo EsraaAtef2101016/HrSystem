@@ -28,6 +28,7 @@ namespace HrSystem.Domain.Entities
         {
             LastForceChangeReason = reason;
             LastForceChangeDate = date;
+            CooldownEndDate = null;
         }
 
         public void UpdateOptInStatus(bool isOptedIn, DateTime currentDate)

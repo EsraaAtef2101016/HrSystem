@@ -88,7 +88,10 @@
     </form>
   </div>
 
-  <div *ngIf="facade.isLoading()" class="loading">Loading policies...</div>
+  @if (facade.isLoading()) {
+  <div  class="loading">Loading policies...</div>
+
+  }
 
   
   <div *ngIf="!facade.isLoading() && facade.filteredPolicies().length > 0" class="cards-grid">
