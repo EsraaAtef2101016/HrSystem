@@ -104,7 +104,13 @@ namespace HrSystem.UnitTests.Service
             var endDate = new DateOnly(2026, 11, 7);
             var holidays = new List<PublicHoliday> { PublicHoliday.Create(new DateOnly(2026, 11, 3), "Test Holiday") };
             var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 14, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 15, UsedDays = 0, ReservedDays = 0, Year = 2026 };
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 15
+            );
+          //   var balance = new LeaveBalance { InitialAllowance = 15, UsedDays = 0, ReservedDays = 0, Year = 2026 };
 
             SetupDefaultMocks(policy, balance, holidays);
 
@@ -125,8 +131,12 @@ namespace HrSystem.UnitTests.Service
         public async Task CreateAsync_FailsWhenValidationFails()
         {
             var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 14, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 15, UsedDays = 0, ReservedDays = 0, Year = 2026 };
-
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 15
+            );
             SetupDefaultMocks(policy, balance);
 
             var validationFailures = new List<FluentValidation.Results.ValidationFailure>
@@ -169,8 +179,12 @@ namespace HrSystem.UnitTests.Service
                 }
             };
             var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 14, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 0, Year = 2026 };
-
+            var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
             SetupDefaultMocks(policy, balance, existingRequests: existingRequests);
 
             var createDto = new CreateLeaveRequestRequest
@@ -186,36 +200,44 @@ namespace HrSystem.UnitTests.Service
             result.Errors.Should().Contain(e => e.Message.Contains("overlapping"));
         }
 
-      [Fact]
-public async Task CreateAsync_ReservesBalanceSuccessfully()
-{
-    // اختر تواريخ تبعد أيام عمل حقيقية (مثلاً الثلاثاء والأربعاء) لتجنب عطلة نهاية الأسبوع
-    var startDate = new DateOnly(2026, 9, 7); // الاثنين
-    var endDate = new DateOnly(2026, 9, 8);
-    var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 14, Version = 1, MinNoticeDays = 0 };
-    var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 2, Year = startDate.Year };
+       [Fact]
+        public async Task CreateAsync_ReservesBalanceSuccessfully()
+        {
+            var startDate = new DateOnly(2026, 9, 7); // Monday
+            var endDate = new DateOnly(2026, 9, 8);   // Tuesday (2 business days)
 
-    SetupDefaultMocks(policy, balance);
+            var testUser = CreateTestUser(UserRole.Employee);
+            var employeeId = testUser.Id;
 
-    // لو دالة CalculateChargedBusinessDaysAsync بتستعلم عن العطلات، اعمل ليها Setup ترجع ليست فاضية
-    _unitOfWorkMock.Setup(u => u.PublicHolidays.GetFutureHolidaysAsync(It.IsAny<DateOnly>()))
-        .ReturnsAsync(new List<PublicHoliday>());
+            var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 14, Version = 1, MinNoticeDays = 0 };
 
-    var createDto = new CreateLeaveRequestRequest
-    {
-        LeaveType = LeaveType.Vacation,
-        StartDate = startDate,
-        EndDate = endDate
-    };
+            var balance = new LeaveBalance(
+                employeeId: employeeId,
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
 
-    var result = await _service.CreateAsync(createDto);
+            SetupDefaultMocks(policy, balance); // <-- fixed
 
-    result.IsSuccess.Should().BeTrue();
-    balance.ReservedDays.Should().Be(4); // 2 القديمة + 2 أيام عمل جديدة
-    _leaveBalanceRepoMock.Verify(b => b.Update(balance), Times.Once);
-}
+            _unitOfWorkMock.Setup(u => u.PublicHolidays.GetFutureHolidaysAsync(It.IsAny<DateOnly>()))
+                .ReturnsAsync(new List<PublicHoliday>());
 
-        [Fact]
+            var createDto = new CreateLeaveRequestRequest
+            {
+                LeaveType = LeaveType.Vacation,
+                StartDate = startDate,
+                EndDate = endDate
+            };
+
+            var result = await _service.CreateAsync(createDto);
+
+            result.IsSuccess.Should().BeTrue();
+            balance.ReservedDays.Should().Be(2);
+            _leaveBalanceRepoMock.Verify(b => b.Update(balance), Times.Once);
+        }
+
+       [Fact]
         public async Task CancelAsync_ReleasesReservedAndUsedBalance()
         {
             var requestId = Guid.NewGuid();
@@ -232,7 +254,14 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
 
             _leaveRequestRepoMock.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(leaveRequest);
 
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 2, ReservedDays = 2, Year = leaveRequest.StartDate.Year };
+            var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
+            balance.ReserveDays(2); // Pending request only ever reserves, never "uses"
+
             _leaveBalanceRepoMock.Setup(b => b.GetByEmployeeAndTypeAndYearAsync(_testUserId, LeaveType.Vacation, leaveRequest.StartDate.Year))
                 .ReturnsAsync(balance);
 
@@ -240,7 +269,7 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
 
             result.IsSuccess.Should().BeTrue();
             balance.ReservedDays.Should().Be(0);
-            balance.UsedDays.Should().Be(0);
+            balance.UsedDays.Should().Be(0); // never set, so stays 0
             leaveRequest.Status.Should().Be(LeaveStatus.Cancelled);
             _unitOfWorkMock.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
@@ -251,7 +280,12 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
             var startDate = new DateOnly(2026, 11, 3);
             var endDate = new DateOnly(2026, 11, 4);
             var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 20, MaxConsecutiveDays = 3, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 0, Year = 2026 };
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
             var existingRequests = new List<LeaveRequest>
             {
                 new()
@@ -281,6 +315,40 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
         }
 
         [Fact]
+        public async Task CancelAsync_ReleasesUsedBalance_WhenApprovedAndFuture()
+        {
+            var requestId = Guid.NewGuid();
+            var leaveRequest = new LeaveRequest
+            {
+                Id = requestId,
+                EmployeeId = _testUserId,
+                LeaveType = LeaveType.Vacation,
+                StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5)),
+                EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(6)),
+                ChargedDays = 2,
+                Status = LeaveStatus.Approved
+            };
+
+            _leaveRequestRepoMock.Setup(r => r.GetByIdAsync(requestId)).ReturnsAsync(leaveRequest);
+
+            var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
+            balance.UseDays(2); // Approved request has consumed days
+
+            _leaveBalanceRepoMock.Setup(b => b.GetByEmployeeAndTypeAndYearAsync(_testUserId, LeaveType.Vacation, leaveRequest.StartDate.Year))
+                .ReturnsAsync(balance);
+
+            var result = await _service.CancelAsync(requestId);
+
+            result.IsSuccess.Should().BeTrue();
+            balance.UsedDays.Should().Be(0);
+            leaveRequest.Status.Should().Be(LeaveStatus.Cancelled);
+        }
+        [Fact]
         public async Task CreateAsync_FailsWhenMinNoticeDaysViolationOccurs()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
@@ -296,8 +364,12 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
                 MinNoticeDays = 5,
                 Version = 1
             };
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 0, Year = startDate.Year };
-
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
             SetupDefaultMocks(policy, balance);
 
             var createDto = new CreateLeaveRequestRequest
@@ -326,8 +398,12 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
                 MaxConsecutiveDays = 1,
                 Version = 1
             };
-            var balance = new LeaveBalance { InitialAllowance = 5, UsedDays = 0, ReservedDays = 0, Year = 2026 };
-
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 5
+            );
             SetupDefaultMocks(policy, balance);
 
             var createDto = new CreateLeaveRequestRequest
@@ -345,15 +421,21 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
 
 
 
-        [Fact]
+      [Fact]
         public async Task CreateAsync_SickLeaveAllowsBackdatingWithinPolicyLimit()
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
-            var startDate = today.AddDays(-2);
-            var endDate = today.AddDays(-1);
-            var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 5, BackdateDays = 5, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 0, Year = startDate.Year };
 
+            var startDate = GetPreviousBusinessDay(today, 2);
+            var endDate = GetPreviousBusinessDay(today, 1);
+
+            var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 5, BackdateDays = 5, Version = 1 };
+            var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
             SetupDefaultMocks(policy, balance);
 
             var createDto = new CreateLeaveRequestRequest
@@ -368,6 +450,15 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
             result.IsSuccess.Should().BeTrue();
         }
 
+        private static DateOnly GetPreviousBusinessDay(DateOnly today, int daysBack)
+        {
+            var date = today.AddDays(-daysBack);
+            while (date.DayOfWeek == DayOfWeek.Friday || date.DayOfWeek == DayOfWeek.Saturday)
+            {
+                date = date.AddDays(-1);
+            }
+            return date;
+        }
         [Fact]
         public async Task CreateAsync_SickLeaveFailsWhenBackdatingExceedsPolicyLimit()
         {
@@ -375,8 +466,12 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
             var startDate = today.AddDays(-10);
             var endDate = today.AddDays(-8);
             var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 10, MaxConsecutiveDays = 5, BackdateDays = 3, Version = 1 };
-            var balance = new LeaveBalance { InitialAllowance = 10, UsedDays = 0, ReservedDays = 0, Year = startDate.Year };
-
+             var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 10
+            );
             SetupDefaultMocks(policy, balance);
 
             var createDto = new CreateLeaveRequestRequest
@@ -448,14 +543,22 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
             result.Errors.Should().Contain(e => e.Message.Contains("Only pending leave requests can be updated"));
         }
 
-        [Fact]
+     [Fact]
         public async Task CreateAsync_SnapshotsPolicyVersionAndAllowance()
         {
-            var startDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
-            var endDate = DateOnly.FromDateTime(DateTime.Today.AddDays(5));
-            var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 21, MaxConsecutiveDays = 5, MinNoticeDays = 1, Version = 3 };
-            var balance = new LeaveBalance { InitialAllowance = 21, UsedDays = 0, ReservedDays = 0, Year = startDate.Year };
+            // Pick a business day at least 1 day out (MinNoticeDays=1) that isn't
+            // Friday/Saturday (this app's weekend), so the test isn't flaky
+            // depending on which day it happens to run.
+            var startDate = GetNextBusinessDay(DateOnly.FromDateTime(DateTime.Today), 5);
+            var endDate = startDate;
 
+            var policy = new LeavePolicy { Id = Guid.NewGuid(), AnnualAllowance = 21, MaxConsecutiveDays = 5, MinNoticeDays = 1, Version = 3 };
+            var balance = new LeaveBalance(
+                employeeId: Guid.NewGuid(),
+                leaveType: LeaveType.Vacation,
+                year: 2026,
+                initialAllowance: 21
+            );
             SetupDefaultMocks(policy, balance);
 
             var createDto = new CreateLeaveRequestRequest
@@ -477,6 +580,19 @@ public async Task CreateAsync_ReservesBalanceSuccessfully()
             capturedRequest.PolicyVersionSnapshot.Should().Be(3);
             capturedRequest.PolicyAllowanceSnapshot.Should().Be(21);
             capturedRequest.LeavePolicyId.Should().Be(policy.Id);
+        }
+
+        // Walks forward from "today" by roughly `daysForward` calendar days, then
+        // nudges later if it lands on a Friday/Saturday, so the resulting date is
+        // always a chargeable business day per this app's weekend definition.
+        private static DateOnly GetNextBusinessDay(DateOnly today, int daysForward)
+        {
+            var date = today.AddDays(daysForward);
+            while (date.DayOfWeek == DayOfWeek.Friday || date.DayOfWeek == DayOfWeek.Saturday)
+            {
+                date = date.AddDays(1);
+            }
+            return date;
         }
     }
 }

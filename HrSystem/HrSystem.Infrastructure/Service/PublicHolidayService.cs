@@ -108,6 +108,14 @@ namespace HrSystem.Infrastructure.Service
             {
                 return Result.Fail<PublicHolidayResponse>(new BadRequestError("Cannot add past holidays."));
             }
+            var holidays =await GetAllHolidaysAsync();
+          foreach (var holiday in holidays.Value)
+            {
+                if (holiday.Date == request.Date)
+                {
+                    return Result.Fail<PublicHolidayResponse>(new BadRequestError("This holiday already exists for this date."));
+                }
+            }
             return Result.Ok<PublicHolidayResponse>(default!);
         }
 

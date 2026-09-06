@@ -58,6 +58,7 @@ namespace HrSystem.UnitTests.Service
             _userRepoMock.Setup(u => u.GetByIdAsync(user.Id)).ReturnsAsync(user);
         }
 
+     
         [Fact]
         public async Task AcceptAsync_ShouldApproveRequest_WhenValidManagerAndPendingStatus()
         {
@@ -79,11 +80,11 @@ namespace HrSystem.UnitTests.Service
                 LeaveType = LeaveType.Vacation
             };
 
+            var balance = new LeaveBalance(employeeId, LeaveType.Vacation, 2026, 15);
+            balance.UpdateReservedDays(0, 2); // Safely sets the reserved days using domain behavior
+
             _leaveRequestRepoMock.Setup(r => r.GetByIdAsync(leaveRequestId)).ReturnsAsync(leaveRequest);
-            _leaveBalanceRepoMock.Setup(b => b.GetAllAsync()).ReturnsAsync(new List<LeaveBalance>
-            {
-                new() { EmployeeId = employeeId, Year = 2026, ReservedDays = 2, UsedDays = 0, LeaveType = LeaveType.Vacation }
-            });
+            _leaveBalanceRepoMock.Setup(b => b.GetAllAsync()).ReturnsAsync(new List<LeaveBalance> { balance });
 
             var result = await _service.AcceptAsync(leaveRequestId);
 
@@ -134,7 +135,14 @@ namespace HrSystem.UnitTests.Service
             };
 
             _leaveRequestRepoMock.Setup(r => r.GetByIdAsync(leaveRequestId)).ReturnsAsync(leaveRequest);
-            var balance = new LeaveBalance { EmployeeId = employeeId, Year = 2026, ReservedDays = 2, UsedDays = 0, LeaveType = LeaveType.Vacation };
+            var balance = new LeaveBalance(
+               employeeId: employeeId,
+               leaveType: LeaveType.Vacation,
+               year: 2026,
+               initialAllowance: 15
+           );
+            balance.ReserveDays(2);
+            //var balance = new LeaveBalance { EmployeeId = employeeId, Year = 2026, ReservedDays = 2, UsedDays = 0, LeaveType = LeaveType.Vacation };
             _leaveBalanceRepoMock.Setup(b => b.GetAllAsync()).ReturnsAsync(new List<LeaveBalance> { balance });
 
             var result = await _service.RejectAsync(leaveRequestId, "Operational constraints");

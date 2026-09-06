@@ -71,7 +71,8 @@ public class LeaveRequestService(
         if (leaveBalance == null)
             return Result.Fail<LeaveRequestResponse>(new NotFoundError("not Found ReviewLeaveResponse."));
 
-        leaveBalance.ReservedDays += chargedDays;
+        leaveBalance.ReserveDays(chargedDays);
+        //leaveBalance.ReservedDays += chargedDays;
         _unitOfWork.LeaveBalances.Update(leaveBalance);
 
         var leaveRequest = new LeaveRequest
@@ -141,7 +142,9 @@ public class LeaveRequestService(
 
         if (leaveBalance != null)
         {
-            leaveBalance.ReservedDays = (leaveBalance.ReservedDays - leaveRequest.ChargedDays) + newChargedDays;
+            // Replace the raw assignment line with:
+           leaveBalance.UpdateReservedDays(leaveRequest.ChargedDays, newChargedDays);
+          //  leaveBalance.ReservedDays = (leaveBalance.ReservedDays - leaveRequest.ChargedDays) + newChargedDays;
             _unitOfWork.LeaveBalances.Update(leaveBalance);
         }
 
@@ -204,8 +207,11 @@ public class LeaveRequestService(
 
         if (leaveBalance != null)
         {
-            leaveBalance.ReservedDays = Math.Max(0, leaveBalance.ReservedDays - leaveRequest.ChargedDays);
-            leaveBalance.UsedDays = Math.Max(0, leaveBalance.UsedDays - leaveRequest.ChargedDays);
+            if (leaveRequest.Status == LeaveStatus.Approved)
+                leaveBalance.ReleaseUsedDays (leaveRequest.ChargedDays);
+            if(leaveRequest.Status == LeaveStatus.Pending)  
+                 leaveBalance.ReleaseReservedDays ( leaveRequest.ChargedDays);
+          //  leaveBalance.UsedDays = Math.Max(0, leaveBalance.UsedDays - leaveRequest.ChargedDays);
             _unitOfWork.LeaveBalances.Update(leaveBalance);
         }
 
@@ -377,16 +383,12 @@ public class LeaveRequestService(
 
         if (leaveBalance == null)
         {
-            leaveBalance = new LeaveBalance
-            {
-                Id = Guid.NewGuid(),
-                EmployeeId = currentUserId,
-                LeaveType = leaveType,
-                Year = currentYear,
-                InitialAllowance = activePolicy.AnnualAllowance,
-                UsedDays = 0,
-                ReservedDays = 0
-            };
+            leaveBalance =  new LeaveBalance(
+            employeeId: currentUserId,
+            leaveType: leaveType,
+            year: currentYear,
+            initialAllowance: activePolicy.AnnualAllowance
+        );
             await _unitOfWork.LeaveBalances.AddAsync(leaveBalance);
         }
 

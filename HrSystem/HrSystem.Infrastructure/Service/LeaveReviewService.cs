@@ -49,8 +49,9 @@ public class LeaveReviewService(IUnitOfWork unitOfWork, IHttpContextAccessor htt
 
         if (leaveBalance != null)
         {
-            leaveBalance.ReservedDays -= leaveRequest.ChargedDays;
-            leaveBalance.UsedDays += leaveRequest.ChargedDays;
+            leaveBalance.CommitReservedToUsed(leaveRequest.ChargedDays);
+           // leaveBalance.ReservedDays -= leaveRequest.ChargedDays;
+           // leaveBalance.UsedDays += leaveRequest.ChargedDays;
 
             _unitOfWork.LeaveBalances.Update(leaveBalance);
         }
@@ -136,7 +137,8 @@ public class LeaveReviewService(IUnitOfWork unitOfWork, IHttpContextAccessor htt
 
         if (leaveBalance != null)
         {
-            leaveBalance.ReservedDays -= leaveRequest.ChargedDays;
+            leaveBalance.ReleaseReservedDays(leaveRequest.ChargedDays);
+          //  leaveBalance.ReservedDays -= leaveRequest.ChargedDays;
             _unitOfWork.LeaveBalances.Update(leaveBalance);
         }
 

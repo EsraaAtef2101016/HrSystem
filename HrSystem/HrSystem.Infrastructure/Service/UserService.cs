@@ -109,16 +109,12 @@ namespace HrSystem.Infrastructure.Service
             var activePolicies = allPolicies.Where(p => p.IsEnabled);
             foreach (var policy in activePolicies)
             {
-                var leaveBalance = new LeaveBalance
-                {
-                    Id = Guid.NewGuid(),
-                    EmployeeId = employeeId,
-                    LeaveType = policy.LeaveType,
-                    Year = currentYear,
-                    InitialAllowance = policy.AnnualAllowance,
-                    UsedDays = 0,
-                    ReservedDays = 0
-                };
+                var leaveBalance = new LeaveBalance(
+                    employeeId: employeeId,
+                    leaveType: policy.LeaveType,
+                    year: currentYear,
+                    initialAllowance:  policy.AnnualAllowance
+                );
 
                 await _unitOfWork.LeaveBalances.AddAsync(leaveBalance);
             }
